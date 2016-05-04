@@ -141,7 +141,7 @@ namespace Opm {
                 errorKey = ParseContext::PARSE_RANDOM_TEXT;
                 msg << "String \'" << keywordString << "\' not formatted/recognized as valid keyword at: " << dataFile << ":" << lineNR;
             }
-
+            deck->getMessageContainer().warning(msg);
             parseContext.handleError( errorKey , msg.str() );
         }
 
@@ -445,6 +445,7 @@ bool Parser::parseState(std::shared_ptr<ParserState> parserState) const {
                         targetSize = record.getItem( sizeKeyword.second ).get< int >( 0 );
                     } else {
                         std::string msg = "Expected the kewyord: " + sizeKeyword.first + " to infer the number of records in: " + keywordString;
+                        parserState->deck->getMessageContainer().error(msg);
                         parserState->parseContext.handleError(ParseContext::PARSE_MISSING_DIMS_KEYWORD , msg );
 
                         auto keyword = getKeyword( sizeKeyword.first );
@@ -459,6 +460,7 @@ bool Parser::parseState(std::shared_ptr<ParserState> parserState) const {
         } else {
             if (ParserKeyword::validDeckName(keywordString)) {
                 std::string msg = "Keyword " + keywordString + " not recognized ";
+                parserState->deck->getMessageContainer().error(msg);
                 parserState->parseContext.handleError( ParseContext::PARSE_UNKNOWN_KEYWORD  , msg );
                 return std::shared_ptr<RawKeyword>(  );
             } else {
